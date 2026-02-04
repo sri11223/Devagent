@@ -1,5 +1,13 @@
 import { AuthenticatedRequest } from "../middleware/auth.js";
-import { createPipelineForProject, getPipelineDetail, getProjectPipelines } from "../services/orchestratorService.js";
+import {
+  addReview,
+  createContract,
+  createPipelineForProject,
+  getPipelineDetail,
+  getProjectPipelines,
+  updateContractStatus,
+  updateStage
+} from "../services/orchestratorService.js";
 
 export async function listByProject(req: AuthenticatedRequest, res: Express.Response) {
   if (!req.user) {
@@ -37,5 +45,57 @@ export async function detail(req: AuthenticatedRequest, res: Express.Response) {
     return res.status(200).json(detail);
   } catch (error) {
     return res.status(404).json({ message: (error as Error).message });
+  }
+}
+
+export async function createContractForPipeline(req: AuthenticatedRequest, res: Express.Response) {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const contract = await createContract(req.params.pipelineId, req.body);
+    return res.status(201).json({ contract });
+  } catch (error) {
+    return res.status(400).json({ message: (error as Error).message });
+  }
+}
+
+export async function updateContract(req: AuthenticatedRequest, res: Express.Response) {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const contract = await updateContractStatus(req.params.contractId, req.body.status);
+    return res.status(200).json({ contract });
+  } catch (error) {
+    return res.status(400).json({ message: (error as Error).message });
+  }
+}
+
+export async function createReviewForContract(req: AuthenticatedRequest, res: Express.Response) {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const review = await addReview(req.params.contractId, req.body);
+    return res.status(201).json({ review });
+  } catch (error) {
+    return res.status(400).json({ message: (error as Error).message });
+  }
+}
+
+export async function updateStageStatus(req: AuthenticatedRequest, res: Express.Response) {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  try {
+    const stage = await updateStage(req.params.pipelineId, req.params.stageId, req.body.status);
+    return res.status(200).json({ stage });
+  } catch (error) {
+    return res.status(400).json({ message: (error as Error).message });
   }
 }

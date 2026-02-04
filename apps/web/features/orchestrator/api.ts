@@ -51,3 +51,31 @@ export async function getPipelineDetail(pipelineId: string) {
     `/orchestrator/pipelines/${pipelineId}`
   );
 }
+
+export async function createContract(pipelineId: string, payload: { agent: string; objective: string; input: Record<string, unknown> }) {
+  return apiFetch<{ contract: TaskContract }>(`/orchestrator/pipelines/${pipelineId}/contracts`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export async function updateContractStatus(contractId: string, status: TaskContract["status"]) {
+  return apiFetch<{ contract: TaskContract }>(`/orchestrator/contracts/${contractId}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ status })
+  });
+}
+
+export async function createReview(contractId: string, payload: { reviewer: string; notes: string; status: "requested" | "approved" | "changes_requested" }) {
+  return apiFetch<{ review: { id: string } }>(`/orchestrator/contracts/${contractId}/reviews`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export async function updateStageStatus(pipelineId: string, stageId: string, status: PipelineStage["status"]) {
+  return apiFetch<{ stage: PipelineStage }>(`/orchestrator/pipelines/${pipelineId}/stages/${stageId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status })
+  });
+}

@@ -205,6 +205,10 @@ a {
   max-width: 520px;
 }
 
+.form-wide {
+  max-width: 720px;
+}
+
 .input {
   display: grid;
   gap: 8px;
@@ -278,6 +282,12 @@ a {
 .project-card.selected {
   border-color: var(--primary);
   transform: translateY(-2px);
+}
+
+.button-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .tag {

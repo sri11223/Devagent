@@ -1,5 +1,16 @@
 import { useCallback, useState } from "react";
-import { createPipeline, getPipelineDetail, listPipelinesByProject, Pipeline, PipelineStage, TaskContract } from "../../features/orchestrator/api";
+import {
+  createContract,
+  createPipeline,
+  createReview,
+  getPipelineDetail,
+  listPipelinesByProject,
+  Pipeline,
+  PipelineStage,
+  TaskContract,
+  updateContractStatus,
+  updateStageStatus
+} from "../../features/orchestrator/api";
 
 export function usePipelines(projectId?: string) {
   const [pipelines, setPipelines] = useState<Pipeline[]>([]);
@@ -58,5 +69,39 @@ export function usePipelines(projectId?: string) {
     }
   }, []);
 
-  return { pipelines, detail, loading, error, load, create, loadDetail };
+  const addContract = useCallback(
+    async (pipelineId: string, payload: { agent: string; objective: string; input: Record<string, unknown> }) => {
+      const result = await createContract(pipelineId, payload);
+      await loadDetail(pipelineId);
+      return result.contract;
+    },
+    [loadDetail]
+  );
+
+  const updateContract = useCallback(
+    async (contractId: string, status: TaskContract["status"], pipelineId: string) => {
+      const result = await updateContractStatus(contractId, status);
+      await loadDetail(pipelineId);
+      return result.contract;
+    },
+    [loadDetail]
+  );
+
+  const addReview = useCallback(
+    async (contractId: string, payload: { reviewer: string; notes: string; status: "requested" | "approved" | "changes_requested" }, pipelineId: string) => {
+      await createReview(contractId, payload);
+      await loadDetail(pipelineId);
+    },
+    [loadDetail]
+  );
+
+  const setStageStatus = useCallback(
+    async (pipelineId: string, stageId: string, status: PipelineStage["status"]) => {
+      await updateStageStatus(pipelineId, stageId, status);
+      await loadDetail(pipelineId);
+    },
+    [loadDetail]
+  );
+
+  return { pipelines, detail, loading, error, load, create, loadDetail, addContract, updateContract, addReview, setStageStatus };
 }

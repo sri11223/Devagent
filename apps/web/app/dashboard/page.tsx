@@ -18,6 +18,8 @@ export default function DashboardPage() {
   const { projects, loading, error, load, create } = useProjects();
   const [form, setForm] = useState({ name: "", description: "", status: "planned" as Project["status"] });
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [contractForm, setContractForm] = useState({ agent: "", objective: "", input: "{}" });
+  const [reviewForm, setReviewForm] = useState({ contractId: "", reviewer: "", notes: "", status: "requested" as const });
 
   const selectedProject = useMemo(
     () => projects.find((project) => project.id === selectedProjectId) ?? null,
@@ -67,6 +69,39 @@ export default function DashboardPage() {
       toast.push({ title: "Pipeline created", description: "Agents are now assigned to stages.", tone: "success" });
     } catch (err) {
       toast.push({ title: "Pipeline failed", description: (err as Error).message, tone: "error" });
+    }
+  }
+
+  async function handleCreateContract(pipelineId: string) {
+    try {
+      const parsedInput = contractForm.input ? JSON.parse(contractForm.input) : {};
+      await pipelineHook.addContract(pipelineId, {
+        agent: contractForm.agent,
+        objective: contractForm.objective,
+        input: parsedInput
+      });
+      setContractForm({ agent: "", objective: "", input: "{}" });
+      toast.push({ title: "Contract created", description: "Agent contract saved.", tone: "success" });
+    } catch (err) {
+      toast.push({ title: "Contract failed", description: (err as Error).message, tone: "error" });
+    }
+  }
+
+  async function handleReview(pipelineId: string) {
+    if (!reviewForm.contractId) {
+      toast.push({ title: "Select a contract", description: "Choose a contract to review." });
+      return;
+    }
+    try {
+      await pipelineHook.addReview(reviewForm.contractId, {
+        reviewer: reviewForm.reviewer,
+        notes: reviewForm.notes,
+        status: reviewForm.status
+      }, pipelineId);
+      setReviewForm({ contractId: "", reviewer: "", notes: "", status: "requested" });
+      toast.push({ title: "Review submitted", description: "Review added to the contract.", tone: "success" });
+    } catch (err) {
+      toast.push({ title: "Review failed", description: (err as Error).message, tone: "error" });
     }
   }
 
@@ -209,9 +244,56 @@ export default function DashboardPage() {
                       <Tag tone={stage.status === "completed" ? "success" : "primary"}>{stage.status}</Tag>
                       <h4>{stage.name}</h4>
                       <p>Position: {stage.position}</p>
+                      <div className="button-row">
+                        <Button
+                          variant="ghost"
+                          onClick={() => pipelineHook.setStageStatus(pipelineHook.detail!.pipeline.id, stage.id, "in_progress")}
+                        >
+                          Start
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          onClick={() => pipelineHook.setStageStatus(pipelineHook.detail!.pipeline.id, stage.id, "completed")}
+                        >
+                          Complete
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
+                <SectionHeader title="Create task contract" subtitle="Capture objectives and inputs for the next agent." />
+                <form
+                  className="form form-wide"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    handleCreateContract(pipelineHook.detail!.pipeline.id);
+                  }}
+                >
+                  <TextInput
+                    id="contract-agent"
+                    label="Agent"
+                    value={contractForm.agent}
+                    onChange={(event) => setContractForm((prev) => ({ ...prev, agent: event.target.value }))}
+                    required
+                  />
+                  <TextInput
+                    id="contract-objective"
+                    label="Objective"
+                    value={contractForm.objective}
+                    onChange={(event) => setContractForm((prev) => ({ ...prev, objective: event.target.value }))}
+                    required
+                  />
+                  <div className="input">
+                    <label htmlFor="contract-input">Input (JSON)</label>
+                    <textarea
+                      id="contract-input"
+                      value={contractForm.input}
+                      onChange={(event) => setContractForm((prev) => ({ ...prev, input: event.target.value }))}
+                      rows={4}
+                    />
+                  </div>
+                  <Button type="submit">Create contract</Button>
+                </form>
                 <SectionHeader title="Agent task contracts" subtitle="Contracts and review status for this pipeline." />
                 <div className="grid">
                   {pipelineHook.detail.contracts.map((contract) => (
@@ -220,6 +302,20 @@ export default function DashboardPage() {
                       <h4>{contract.agent}</h4>
                       <p>{contract.objective}</p>
                       <small>Created {new Date(contract.createdAt).toLocaleString()}</small>
+                      <div className="button-row">
+                        <Button
+                          variant="ghost"
+                          onClick={() => pipelineHook.updateContract(contract.id, "review", pipelineHook.detail!.pipeline.id)}
+                        >
+                          Request review
+                        </Button>
+                        <Button
+                          variant="secondary"
+                          onClick={() => pipelineHook.updateContract(contract.id, "approved", pipelineHook.detail!.pipeline.id)}
+                        >
+                          Approve
+                        </Button>
+                      </div>
                     </div>
                   ))}
                   {!pipelineHook.detail.contracts.length && (
@@ -229,6 +325,62 @@ export default function DashboardPage() {
                     />
                   )}
                 </div>
+                <SectionHeader title="Submit review" subtitle="Capture reviewer feedback on a contract." />
+                <form
+                  className="form form-wide"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    handleReview(pipelineHook.detail!.pipeline.id);
+                  }}
+                >
+                  <div className="input">
+                    <label htmlFor="review-contract">Contract</label>
+                    <select
+                      id="review-contract"
+                      value={reviewForm.contractId}
+                      onChange={(event) => setReviewForm((prev) => ({ ...prev, contractId: event.target.value }))}
+                    >
+                      <option value="">Select a contract</option>
+                      {pipelineHook.detail.contracts.map((contract) => (
+                        <option key={contract.id} value={contract.id}>
+                          {contract.agent} · {contract.objective.slice(0, 24)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <TextInput
+                    id="reviewer-name"
+                    label="Reviewer"
+                    value={reviewForm.reviewer}
+                    onChange={(event) => setReviewForm((prev) => ({ ...prev, reviewer: event.target.value }))}
+                    required
+                  />
+                  <div className="input">
+                    <label htmlFor="review-notes">Notes</label>
+                    <textarea
+                      id="review-notes"
+                      value={reviewForm.notes}
+                      onChange={(event) => setReviewForm((prev) => ({ ...prev, notes: event.target.value }))}
+                      rows={3}
+                      required
+                    />
+                  </div>
+                  <div className="input">
+                    <label htmlFor="review-status">Status</label>
+                    <select
+                      id="review-status"
+                      value={reviewForm.status}
+                      onChange={(event) =>
+                        setReviewForm((prev) => ({ ...prev, status: event.target.value as typeof reviewForm.status }))
+                      }
+                    >
+                      <option value="requested">Requested</option>
+                      <option value="approved">Approved</option>
+                      <option value="changes_requested">Changes requested</option>
+                    </select>
+                  </div>
+                  <Button type="submit">Submit review</Button>
+                </form>
               </div>
             )}
           </div>

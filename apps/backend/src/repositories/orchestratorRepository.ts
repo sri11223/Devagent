@@ -69,3 +69,53 @@ export async function listReviewsForContract(taskContractId: string): Promise<Ag
   );
   return result.rows;
 }
+
+export async function createTaskContract(input: {
+  pipelineId: string;
+  agent: string;
+  objective: string;
+  payload: Record<string, unknown>;
+}): Promise<TaskContract> {
+  const result = await pool.query<TaskContract>(
+    "INSERT INTO task_contracts (pipeline_id, agent, objective, input) VALUES ($1, $2, $3, $4) RETURNING id, pipeline_id as \"pipelineId\", agent, objective, input, output, status, created_at as \"createdAt\"",
+    [input.pipelineId, input.agent, input.objective, input.payload]
+  );
+  return result.rows[0];
+}
+
+export async function updateTaskContractStatus(contractId: string, status: TaskContract["status"]): Promise<TaskContract> {
+  const result = await pool.query<TaskContract>(
+    "UPDATE task_contracts SET status = $1 WHERE id = $2 RETURNING id, pipeline_id as \"pipelineId\", agent, objective, input, output, status, created_at as \"createdAt\"",
+    [status, contractId]
+  );
+  return result.rows[0];
+}
+
+export async function createReview(input: {
+  contractId: string;
+  reviewer: string;
+  notes: string;
+  status: AgentReview["status"];
+}): Promise<AgentReview> {
+  const result = await pool.query<AgentReview>(
+    "INSERT INTO agent_reviews (task_contract_id, reviewer, notes, status) VALUES ($1, $2, $3, $4) RETURNING id, task_contract_id as \"taskContractId\", reviewer, notes, status, created_at as \"createdAt\"",
+    [input.contractId, input.reviewer, input.notes, input.status]
+  );
+  return result.rows[0];
+}
+
+export async function updateStageStatus(stageId: string, status: PipelineStage["status"]): Promise<PipelineStage> {
+  const result = await pool.query<PipelineStage>(
+    "UPDATE pipeline_stages SET status = $1, started_at = CASE WHEN $1 = 'in_progress' THEN NOW() ELSE started_at END, completed_at = CASE WHEN $1 = 'completed' THEN NOW() ELSE completed_at END WHERE id = $2 RETURNING id, pipeline_id as \"pipelineId\", name, status, position, started_at as \"startedAt\", completed_at as \"completedAt\"",
+    [status, stageId]
+  );
+  return result.rows[0];
+}
+
+export async function updatePipelineStatus(pipelineId: string, status: Pipeline["status"]): Promise<Pipeline> {
+  const result = await pool.query<Pipeline>(
+    "UPDATE orchestrator_pipelines SET status = $1 WHERE id = $2 RETURNING id, project_id as \"projectId\", status, created_at as \"createdAt\"",
+    [status, pipelineId]
+  );
+  return result.rows[0];
+}
