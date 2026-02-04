@@ -269,6 +269,15 @@ a {
 .project-card {
   display: grid;
   gap: 8px;
+  text-align: left;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: border 0.2s ease, transform 0.2s ease;
+}
+
+.project-card.selected {
+  border-color: var(--primary);
+  transform: translateY(-2px);
 }
 
 .tag {
@@ -316,6 +325,24 @@ a {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 16px;
   margin: 48px 0;
+}
+
+.pipeline-overview {
+  display: grid;
+  gap: 24px;
+}
+
+.pipeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+}
+
+.pipeline-detail {
+  display: grid;
+  gap: 16px;
 }
 
 .metric {
