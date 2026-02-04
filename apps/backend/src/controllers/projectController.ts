@@ -7,12 +7,20 @@ import {
   updateProject
 } from "../services/projectService.js";
 
-export async function list(req: AuthenticatedRequest, res: Express.Response) {
+export async function list(
+  req: AuthenticatedRequest,
+  res: Express.Response,
+  next: Express.NextFunction
+) {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-  const projects = await listUserProjects(req.user.userId);
-  return res.status(200).json({ projects });
+  try {
+    const projects = await listUserProjects(req.user.userId);
+    return res.status(200).json({ projects });
+  } catch (error) {
+    return next(error);
+  }
 }
 
 export async function detail(req: AuthenticatedRequest, res: Express.Response) {
@@ -27,12 +35,20 @@ export async function detail(req: AuthenticatedRequest, res: Express.Response) {
   }
 }
 
-export async function create(req: AuthenticatedRequest, res: Express.Response) {
+export async function create(
+  req: AuthenticatedRequest,
+  res: Express.Response,
+  next: Express.NextFunction
+) {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
-  const project = await createProject(req.user.userId, req.body);
-  return res.status(201).json({ project });
+  try {
+    const project = await createProject(req.user.userId, req.body);
+    return res.status(201).json({ project });
+  } catch (error) {
+    return next(error);
+  }
 }
 
 export async function update(req: AuthenticatedRequest, res: Express.Response) {

@@ -31,7 +31,7 @@ This repository contains a production-grade, multi-agent system that turns produ
 2. Configure environment variables:
    ```bash
    export DATABASE_URL=postgres://devagent:devagent@localhost:5432/devagent
-   export JWT_SECRET=change-me-please-change-me
+   export JWT_SECRET=change-me-please-change-me-32-characters
    export JWT_EXPIRES_IN=1h
    export CORS_ORIGIN=http://localhost:3000
    export PORT=4000
