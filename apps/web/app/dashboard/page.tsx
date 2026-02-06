@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "../../shared/components/Button";
 import { TextInput } from "../../shared/components/TextInput";
 import { EmptyState } from "../../shared/components/EmptyState";
@@ -13,6 +14,7 @@ import { usePipelines } from "../../shared/hooks/usePipelines";
 import type { Project } from "../../features/projects/api";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { user, status } = useAuth();
   const toast = useToastContext();
   const { projects, loading, error, load, create } = useProjects();
@@ -27,6 +29,12 @@ export default function DashboardPage() {
   );
 
   const pipelineHook = usePipelines(selectedProject?.id);
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/login");
+    }
+  }, [status, router]);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -105,13 +113,13 @@ export default function DashboardPage() {
     }
   }
 
-  if (status === "unauthenticated") {
+  if (status === "unauthenticated" || status === "idle" || status === "loading") {
     return (
-      <EmptyState
-        title="Sign in to view your pipeline"
-        description="Authenticate to create projects and track multi-agent execution."
-        action={{ label: "Go to login", href: "/auth/login" }}
-      />
+      <div style={{ padding: "80px 20px", textAlign: "center" }}>
+        <p style={{ color: "var(--muted)" }}>
+          {status === "loading" || status === "idle" ? "Loading..." : "Redirecting to login..."}
+        </p>
+      </div>
     );
   }
 

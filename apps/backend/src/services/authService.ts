@@ -29,9 +29,11 @@ export async function registerUser(input: {
     passwordHash
   });
 
-  const token = jwt.sign({ userId: user.id, email: user.email }, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRES_IN
-  });
+  const token = jwt.sign(
+    { userId: user.id, email: user.email },
+    env.JWT_SECRET,
+    { expiresIn: env.JWT_EXPIRES_IN } as jwt.SignOptions
+  );
 
   return { user: toPublicUser(user), token };
 }
@@ -50,9 +52,11 @@ export async function loginUser(input: {
     throw new Error("Invalid credentials");
   }
 
-  const token = jwt.sign({ userId: user.id, email: user.email }, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRES_IN
-  });
+  const token = jwt.sign(
+    { userId: user.id, email: user.email },
+    env.JWT_SECRET,
+    { expiresIn: env.JWT_EXPIRES_IN } as jwt.SignOptions
+  );
 
   return { user: toPublicUser(user), token };
 }

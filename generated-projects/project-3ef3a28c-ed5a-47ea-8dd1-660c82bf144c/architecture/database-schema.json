@@ -1,0 +1,66 @@
+{
+  "users": {
+    "id": "uuid primary key default gen_random_uuid()",
+    "email": "varchar(255) unique not null",
+    "password": "varchar(255) not null",
+    "name": "varchar(255)",
+    "avatar_url": "varchar(2048)",
+    "created_at": "timestamp default current_timestamp",
+    "updated_at": "timestamp default current_timestamp"
+  },
+  "boards": {
+    "id": "uuid primary key default gen_random_uuid()",
+    "name": "varchar(255) not null",
+    "description": "text",
+    "owner_id": "uuid references users(id) on delete cascade",
+    "created_at": "timestamp default current_timestamp",
+    "updated_at": "timestamp default current_timestamp"
+  },
+  "board_members": {
+    "board_id": "uuid references boards(id) on delete cascade",
+    "user_id": "uuid references users(id) on delete cascade",
+    "role": "varchar(50) default 'member'",
+    "created_at": "timestamp default current_timestamp",
+    "primary key": "(board_id, user_id)"
+  },
+  "tasks": {
+    "id": "uuid primary key default gen_random_uuid()",
+    "board_id": "uuid references boards(id) on delete cascade",
+    "title": "varchar(255) not null",
+    "description": "text",
+    "status": "varchar(50) default 'todo'",
+    "due_date": "timestamp",
+    "priority": "varchar(50) default 'medium'",
+    "assigned_to_user_id": "uuid references users(id) on delete set null",
+    "created_by_user_id": "uuid references users(id) on delete set null",
+    "created_at": "timestamp default current_timestamp",
+    "updated_at": "timestamp default current_timestamp"
+  },
+  "comments": {
+    "id": "uuid primary key default gen_random_uuid()",
+    "task_id": "uuid references tasks(id) on delete cascade",
+    "user_id": "uuid references users(id) on delete set null",
+    "content": "text not null",
+    "created_at": "timestamp default current_timestamp",
+    "updated_at": "timestamp default current_timestamp"
+  },
+  "attachments": {
+    "id": "uuid primary key default gen_random_uuid()",
+    "task_id": "uuid references tasks(id) on delete cascade",
+    "user_id": "uuid references users(id) on delete set null",
+    "file_name": "varchar(255) not null",
+    "file_url": "varchar(2048) not null",
+    "file_type": "varchar(100)",
+    "file_size": "integer",
+    "created_at": "timestamp default current_timestamp"
+  },
+  "notifications": {
+    "id": "uuid primary key default gen_random_uuid()",
+    "user_id": "uuid references users(id) on delete cascade",
+    "type": "varchar(100) not null",
+    "message": "text not null",
+    "related_entity_id": "uuid",
+    "is_read": "boolean default false",
+    "created_at": "timestamp default current_timestamp"
+  }
+}

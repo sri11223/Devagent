@@ -1,0 +1,77 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/auth/register",
+    "description": "Register a new user"
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/login",
+    "description": "User login, returns JWT"
+  },
+  {
+    "method": "GET",
+    "path": "/api/users/me",
+    "description": "Get current user profile"
+  },
+  {
+    "method": "GET",
+    "path": "/api/boards",
+    "description": "Get all boards for the authenticated user"
+  },
+  {
+    "method": "POST",
+    "path": "/api/boards",
+    "description": "Create a new board"
+  },
+  {
+    "method": "GET",
+    "path": "/api/boards/:boardId",
+    "description": "Get a specific board and its tasks"
+  },
+  {
+    "method": "POST",
+    "path": "/api/boards/:boardId/members",
+    "description": "Invite a user to a board"
+  },
+  {
+    "method": "POST",
+    "path": "/api/boards/:boardId/tasks",
+    "description": "Create a new task on a board"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/tasks/:taskId",
+    "description": "Update an existing task (title, description, status, due_date, priority, assigned_to)"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/tasks/:taskId",
+    "description": "Delete a task"
+  },
+  {
+    "method": "POST",
+    "path": "/api/tasks/:taskId/comments",
+    "description": "Add a comment to a task"
+  },
+  {
+    "method": "GET",
+    "path": "/api/tasks/:taskId/comments",
+    "description": "Get all comments for a task"
+  },
+  {
+    "method": "POST",
+    "path": "/api/tasks/:taskId/attachments",
+    "description": "Upload a file attachment to a task"
+  },
+  {
+    "method": "GET",
+    "path": "/api/notifications",
+    "description": "Get all notifications for the authenticated user"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/notifications/:notificationId/read",
+    "description": "Mark a notification as read"
+  }
+]

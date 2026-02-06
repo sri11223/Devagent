@@ -1,0 +1,22 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Build Docker images
+        run: |
+          docker build -t myapp-backend ./backend
+          docker build -t myapp-frontend ./frontend
+      
+      - name: Deploy to AWS
+        run: |
+          # Add your deployment commands here
+          echo "Deploying to production..."

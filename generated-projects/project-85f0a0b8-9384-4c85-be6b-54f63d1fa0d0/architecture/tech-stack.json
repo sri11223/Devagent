@@ -1,0 +1,6 @@
+{
+  "backend": "Microservices Architecture (Node.js + Express + TypeScript, Python + FastAPI, Go for specific services) with GraphQL Gateway (Apollo Federation), REST APIs, WebSockets, Apache Kafka (Event Bus), Redis (Caching, Pub/Sub), Kubernetes (Orchestration), Nginx (API Gateway)",
+  "frontend": "React + Next.js + TypeScript",
+  "database": "PostgreSQL (for relational data: users, projects, tasks, sprints, roles), MongoDB (for unstructured data: chat messages, activity logs, notifications, file metadata), Redis (for caching, session store, WebSocket pub/sub)",
+  "auth": "OAuth2 (for user authentication and identity providers), JWT (for API token management), bcrypt (for password hashing), RBAC (Role-Based Access Control)"
+}

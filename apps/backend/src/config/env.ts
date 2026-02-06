@@ -1,7 +1,14 @@
 import dotenv from "dotenv";
 import { z } from "zod";
 
-dotenv.config();
+const result = dotenv.config();
+
+// Debug: log if .env was loaded
+if (result.error) {
+  console.error("Error loading .env file:", result.error);
+} else {
+  console.log(".env file loaded successfully");
+}
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
@@ -16,8 +23,10 @@ const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
   // eslint-disable-next-line no-console
-  console.error("Invalid environment variables", parsed.error.flatten().fieldErrors);
+  console.error("Invalid environment variables:");
+  console.error(JSON.stringify(parsed.error.flatten().fieldErrors, null, 2));
   throw new Error("Invalid environment variables");
 }
 
+console.log("Environment variables validated successfully");
 export const env = parsed.data;

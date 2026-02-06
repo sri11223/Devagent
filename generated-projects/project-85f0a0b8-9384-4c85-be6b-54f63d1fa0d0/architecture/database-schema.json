@@ -1,0 +1,127 @@
+{
+  "PostgreSQL": {
+    "users": {
+      "id": "uuid primary key",
+      "email": "varchar(255) unique not null",
+      "password_hash": "varchar(255) not null",
+      "first_name": "varchar(100)",
+      "last_name": "varchar(100)",
+      "avatar_url": "varchar(255)",
+      "created_at": "timestamp default now()",
+      "updated_at": "timestamp default now()"
+    },
+    "teams": {
+      "id": "uuid primary key",
+      "name": "varchar(255) not null",
+      "description": "text",
+      "created_at": "timestamp default now()"
+    },
+    "user_teams": {
+      "user_id": "uuid references users(id)",
+      "team_id": "uuid references teams(id)",
+      "role": "enum('admin', 'member', 'guest') not null",
+      "primary_key": "(user_id, team_id)"
+    },
+    "projects": {
+      "id": "uuid primary key",
+      "team_id": "uuid references teams(id)",
+      "name": "varchar(255) not null",
+      "description": "text",
+      "status": "enum('active', 'archived', 'completed') default 'active'",
+      "start_date": "date",
+      "end_date": "date",
+      "created_at": "timestamp default now()",
+      "updated_at": "timestamp default now()"
+    },
+    "boards": {
+      "id": "uuid primary key",
+      "project_id": "uuid references projects(id)",
+      "name": "varchar(255) not null",
+      "type": "enum('kanban', 'list', 'calendar') not null",
+      "created_at": "timestamp default now()"
+    },
+    "board_columns": {
+      "id": "uuid primary key",
+      "board_id": "uuid references boards(id)",
+      "name": "varchar(255) not null",
+      "order_index": "integer not null",
+      "created_at": "timestamp default now()"
+    },
+    "tasks": {
+      "id": "uuid primary key",
+      "project_id": "uuid references projects(id)",
+      "board_column_id": "uuid references board_columns(id) null",
+      "parent_task_id": "uuid references tasks(id) null",
+      "title": "varchar(255) not null",
+      "description": "text",
+      "status": "enum('todo', 'in_progress', 'done', 'blocked') default 'todo'",
+      "priority": "enum('low', 'medium', 'high') default 'medium'",
+      "due_date": "date",
+      "created_at": "timestamp default now()",
+      "updated_at": "timestamp default now()"
+    },
+    "task_assignments": {
+      "task_id": "uuid references tasks(id)",
+      "user_id": "uuid references users(id)",
+      "primary_key": "(task_id, user_id)"
+    },
+    "comments": {
+      "id": "uuid primary key",
+      "task_id": "uuid references tasks(id)",
+      "user_id": "uuid references users(id)",
+      "content": "text not null",
+      "created_at": "timestamp default now()"
+    },
+    "time_entries": {
+      "id": "uuid primary key",
+      "task_id": "uuid references tasks(id)",
+      "user_id": "uuid references users(id)",
+      "start_time": "timestamp not null",
+      "end_time": "timestamp",
+      "duration_minutes": "integer",
+      "description": "text",
+      "created_at": "timestamp default now()"
+    }
+  },
+  "MongoDB": {
+    "chat_messages": {
+      "_id": "ObjectId primary key",
+      "channel_id": "uuid",
+      "sender_id": "uuid",
+      "content": "string",
+      "timestamp": "ISODate",
+      "attachments": "[{file_id: uuid, filename: string}]",
+      "read_by": "[uuid]"
+    },
+    "activity_logs": {
+      "_id": "ObjectId primary key",
+      "user_id": "uuid",
+      "action": "string (e.g., 'task_created', 'project_updated')",
+      "entity_type": "string (e.g., 'task', 'project')",
+      "entity_id": "uuid",
+      "details": "object (flexible schema for action-specific data)",
+      "timestamp": "ISODate"
+    },
+    "notifications": {
+      "_id": "ObjectId primary key",
+      "user_id": "uuid",
+      "type": "string (e.g., 'task_assigned', 'comment_added')",
+      "message": "string",
+      "read_status": "boolean default false",
+      "created_at": "ISODate",
+      "related_entity_id": "uuid",
+      "related_entity_type": "string"
+    },
+    "file_metadata": {
+      "_id": "uuid primary key",
+      "original_name": "string",
+      "mime_type": "string",
+      "size": "integer",
+      "storage_path": "string (e.g., S3 key)",
+      "uploaded_by": "uuid references users(id)",
+      "uploaded_at": "ISODate",
+      "associated_entity_id": "uuid",
+      "associated_entity_type": "string (e.g., 'task', 'comment', 'project')"
+    }
+  }
+}

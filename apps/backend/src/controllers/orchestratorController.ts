@@ -1,3 +1,4 @@
+import { Response } from "express";
 import { AuthenticatedRequest } from "../middleware/auth.js";
 import {
   addReview,
@@ -9,7 +10,7 @@ import {
   updateStage
 } from "../services/orchestratorService.js";
 
-export async function listByProject(req: AuthenticatedRequest, res: Express.Response) {
+export async function listByProject(req: AuthenticatedRequest, res: Response) {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -22,7 +23,7 @@ export async function listByProject(req: AuthenticatedRequest, res: Express.Resp
   }
 }
 
-export async function create(req: AuthenticatedRequest, res: Express.Response) {
+export async function create(req: AuthenticatedRequest, res: Response) {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -35,7 +36,7 @@ export async function create(req: AuthenticatedRequest, res: Express.Response) {
   }
 }
 
-export async function detail(req: AuthenticatedRequest, res: Express.Response) {
+export async function detail(req: AuthenticatedRequest, res: Response) {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -48,7 +49,7 @@ export async function detail(req: AuthenticatedRequest, res: Express.Response) {
   }
 }
 
-export async function createContractForPipeline(req: AuthenticatedRequest, res: Express.Response) {
+export async function createContractForPipeline(req: AuthenticatedRequest, res: Response) {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -61,7 +62,7 @@ export async function createContractForPipeline(req: AuthenticatedRequest, res: 
   }
 }
 
-export async function updateContract(req: AuthenticatedRequest, res: Express.Response) {
+export async function updateContract(req: AuthenticatedRequest, res: Response) {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -74,7 +75,7 @@ export async function updateContract(req: AuthenticatedRequest, res: Express.Res
   }
 }
 
-export async function createReviewForContract(req: AuthenticatedRequest, res: Express.Response) {
+export async function createReviewForContract(req: AuthenticatedRequest, res: Response) {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -87,7 +88,7 @@ export async function createReviewForContract(req: AuthenticatedRequest, res: Ex
   }
 }
 
-export async function updateStageStatus(req: AuthenticatedRequest, res: Express.Response) {
+export async function updateStageStatus(req: AuthenticatedRequest, res: Response) {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
   }

@@ -1,0 +1,107 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/auth/register",
+    "description": "Register a new user"
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/login",
+    "description": "User login, returns JWT"
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/token/refresh",
+    "description": "Refresh access token"
+  },
+  {
+    "method": "GET",
+    "path": "/api/auth/me",
+    "description": "Get current user profile"
+  },
+  {
+    "method": "POST",
+    "path": "/graphql",
+    "description": "GraphQL endpoint for complex queries and mutations (e.g., fetching project with tasks and users)"
+  },
+  {
+    "method": "GET",
+    "path": "/api/projects",
+    "description": "List all projects for the authenticated user/team"
+  },
+  {
+    "method": "POST",
+    "path": "/api/projects",
+    "description": "Create a new project"
+  },
+  {
+    "method": "GET",
+    "path": "/api/projects/{projectId}/tasks",
+    "description": "List tasks for a specific project"
+  },
+  {
+    "method": "POST",
+    "path": "/api/projects/{projectId}/tasks",
+    "description": "Create a new task within a project"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/tasks/{taskId}",
+    "description": "Update an existing task"
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/tasks/{taskId}",
+    "description": "Delete a task"
+  },
+  {
+    "method": "PUT",
+    "path": "/api/boards/{boardId}/tasks/{taskId}/move",
+    "description": "Move a task between columns on a board (real-time update via WebSocket)"
+  },
+  {
+    "method": "GET",
+    "path": "/api/chat/channels/{channelId}/messages",
+    "description": "Get chat messages for a channel"
+  },
+  {
+    "method": "POST",
+    "path": "/api/chat/channels/{channelId}/messages",
+    "description": "Send a new chat message"
+  },
+  {
+    "method": "WS",
+    "path": "/ws/chat/{channelId}",
+    "description": "WebSocket for real-time chat messages"
+  },
+  {
+    "method": "POST",
+    "path": "/api/files/upload",
+    "description": "Upload a file, returns file metadata"
+  },
+  {
+    "method": "GET",
+    "path": "/api/files/{fileId}/download",
+    "description": "Download a file"
+  },
+  {
+    "method": "POST",
+    "path": "/api/tasks/{taskId}/time-entries",
+    "description": "Log time for a task"
+  },
+  {
+    "method": "GET",
+    "path": "/api/notifications",
+    "description": "Get unread notifications for the user"
+  },
+  {
+    "method": "WS",
+    "path": "/ws/notifications/{userId}",
+    "description": "WebSocket for real-time user notifications"
+  },
+  {
+    "method": "GET",
+    "path": "/api/analytics/projects/{projectId}/overview",
+    "description": "Get project overview analytics"
+  }
+]

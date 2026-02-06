@@ -1,7 +1,8 @@
+import { Request, Response } from "express";
 import { registerUser, loginUser, getCurrentUser } from "../services/authService.js";
 import { AuthenticatedRequest } from "../middleware/auth.js";
 
-export async function register(req: Express.Request, res: Express.Response) {
+export async function register(req: Request, res: Response) {
   try {
     const result = await registerUser(req.body);
     return res.status(201).json(result);
@@ -10,7 +11,7 @@ export async function register(req: Express.Request, res: Express.Response) {
   }
 }
 
-export async function login(req: Express.Request, res: Express.Response) {
+export async function login(req: Request, res: Response) {
   try {
     const result = await loginUser(req.body);
     return res.status(200).json(result);
@@ -19,7 +20,7 @@ export async function login(req: Express.Request, res: Express.Response) {
   }
 }
 
-export async function me(req: AuthenticatedRequest, res: Express.Response) {
+export async function me(req: AuthenticatedRequest, res: Response) {
   try {
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });

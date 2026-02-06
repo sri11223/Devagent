@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
 import { env } from "../config/env.js";
 
 export type AuthPayload = {
@@ -6,14 +7,14 @@ export type AuthPayload = {
   email: string;
 };
 
-export type AuthenticatedRequest = Express.Request & {
+export type AuthenticatedRequest = Request & {
   user?: AuthPayload;
 };
 
 export function authenticate(
   req: AuthenticatedRequest,
-  res: Express.Response,
-  next: Express.NextFunction
+  res: Response,
+  next: NextFunction
 ) {
   const header = req.headers.authorization;
   if (!header) {

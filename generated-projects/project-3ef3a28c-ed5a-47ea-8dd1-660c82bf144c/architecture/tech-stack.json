@@ -1,0 +1,9 @@
+{
+  "backend": "Node.js + Express + TypeScript + Socket.IO",
+  "frontend": "React + Next.js + TypeScript",
+  "database": "PostgreSQL",
+  "caching": "Redis",
+  "realtime": "WebSockets (Socket.IO)",
+  "auth": "JWT + bcrypt",
+  "fileStorage": "AWS S3 (or similar cloud storage)"
+}
