@@ -49,6 +49,8 @@ export async function detail(req: AuthenticatedRequest, res: Response) {
   }
 }
 
+import { addTaskToQueue } from "../services/queueService.js";
+
 export async function createContractForPipeline(req: AuthenticatedRequest, res: Response) {
   if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });
@@ -56,6 +58,10 @@ export async function createContractForPipeline(req: AuthenticatedRequest, res: 
 
   try {
     const contract = await createContract(req.params.pipelineId, req.body);
+
+    // Add to queue for asynchronous processing
+    await addTaskToQueue(contract);
+
     return res.status(201).json({ contract });
   } catch (error) {
     return res.status(400).json({ message: (error as Error).message });

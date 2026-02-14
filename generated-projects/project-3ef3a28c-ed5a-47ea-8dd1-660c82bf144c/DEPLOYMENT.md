@@ -1,4 +1,3 @@
-# Deployment Guide
 
 ## Local Development
 
