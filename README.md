@@ -15,7 +15,6 @@ This repository contains a production-grade, multi-agent system that turns produ
 /docs                  # Architecture, ADRs, and design documentation
 /infra                 # Docker compose and infrastructure scripts
 ```
-
 ## Backend (Express + PostgreSQL)
 ### Features
 - JWT authentication and rate-limited API endpoints
@@ -62,14 +61,12 @@ This repository contains a production-grade, multi-agent system that turns produ
    ```bash
    npm run dev
    ```
-
 ## Docker (Optional)
 Use Docker Compose for a local Postgres and API environment:
 ```bash
 cd infra
 docker compose up --build
 ```
-
 ## Next Steps
 - Define the orchestrator workflow and agent task contract schema.
 - Implement orchestrator service and agent workers.
